@@ -1,0 +1,86 @@
+<?php
+
+/**
+ * @file
+ * Adds additional css files to the Overlay module iframe
+ */
+
+/**
+ * Implements hook_library_alter().
+ */
+function overlay_styles_library_alter(&$libraries, $module) {
+  
+  if ($module == 'overlay') {
+  
+    $module_path = drupal_get_path('module', 'overlay_styles');
+  
+  	if(isset($libraries['parent'])){
+  		
+  		$csspath = variable_get("overlay_styles_parent_csspath", $module_path . '/overlay-styles-parent.css');
+
+  		//add overlay styles parent css
+  		$libraries['parent']['css'][$csspath] = array();
+  
+  	}
+  	
+  	if(isset($libraries['child'])){
+ 		
+ 		$csspath = variable_get("overlay_styles_child_csspath", $module_path . '/overlay-styles-child.css');
+ 		
+ 		//add overlay styles child css 
+  		 $libraries['child']['css'][$csspath] = array();
+  		 
+  	}
+  	
+  }
+  
+}
+
+/**
+ * Implements hook_menu().
+ */
+function overlay_styles_menu() {
+
+  $items = array();
+
+  $items['admin/config/user-interface/overlay_styles'] = array(
+    'title' => 'Overlay Styles',
+    'description' => 'Edit paths to overlay parent and child mode stylesheets.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('overlay_styles_config'),
+    'access arguments' => array('administer overlay_styles settings'),
+    'type' => MENU_NORMAL_ITEM,
+   );
+
+  return $items;
+}
+
+function overlay_styles_config() {
+
+  $module_path = drupal_get_path('module', 'overlay_styles');
+
+  $form = array();
+
+  $form['overlay_styles_parent_csspath'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Path to Overlay Styles Parent CSS File'),
+    '#default_value' => variable_get('overlay_styles_parent_csspath', $module_path . '/overlay-styles-parent.css'),
+    '#size' => 64,
+    '#maxlength' => 255,
+    '#description' => t("Enter a path to an additional stylesheet to load when the Overlay module is in parent mode."),
+    '#required' => TRUE,
+  );
+  
+  $form['overlay_styles_child_csspath'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Path to Overlay Styles Child CSS File'),
+    '#default_value' => variable_get('overlay_styles_child_csspath', $module_path . '/overlay-styles-child.css'),
+    '#size' => 64,
+    '#maxlength' => 255,
+    '#description' => t("Enter a path to an additional stylesheet to load when the Overlay module is in child mode."),
+    '#required' => TRUE,
+  );
+
+  return system_settings_form($form);
+  
+}

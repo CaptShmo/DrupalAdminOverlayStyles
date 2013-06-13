@@ -1,0 +1,4 @@
+name = Overlay Styles
+description = This module adds extra css files to the overlay module iframe in order to customize its appearance.
+core = 7.x
+dependencies[] = overlay
